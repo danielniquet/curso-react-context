@@ -1,18 +1,25 @@
 import React, { Component, createContext } from 'react';
+import ActionTypes from './ActionTypes'
+import reducer from './reducers'
 
 const {Provider, Consumer} = createContext()
 
+
 class ContextStore extends Component{
-   changeName=()=>{
-      this.setState({user:{name:'Michael Jackson'}})
-   }
    state={
-      user:{name:'John Doe'},
-      changeName: this.changeName,
+      user:{},
+      posts:[],
+      dispatch: async action => {
+        const response = await reducer(this.state, action)
+        this.setState( response ) 
+      }
    }
    render(){
+      const {store} = this.props
+      const {dispatch} = this.state
+     
       return (
-         <Provider value={this.state}>
+         <Provider value={store?{[store]:this.state[store], dispatch}:this.state}>
             {this.props.comp}
          </Provider>
       )
@@ -30,4 +37,5 @@ const WrapperConsumer = (Component) => {
  }
 
 export default WrapperConsumer;
+export {ActionTypes}
 export {ContextStore}
